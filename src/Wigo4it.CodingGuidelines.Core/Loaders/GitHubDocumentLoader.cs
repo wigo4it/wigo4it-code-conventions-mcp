@@ -36,7 +36,8 @@ public class GitHubDocumentLoader : IDocumentLoader
         try
         {
             // Get repository contents for docs folder
-            var apiUrl = $"https://api.github.com/repos/{_configuration.GitHubOwner}/{_configuration.GitHubRepo}/contents/{_configuration.DocsPath}?ref={_configuration.GitHubBranch}";
+            // Note: GitHub API works better without the ref parameter for the default branch
+            var apiUrl = $"https://api.github.com/repos/{_configuration.GitHubOwner}/{_configuration.GitHubRepo}/contents/{_configuration.DocsPath}";
             
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "Wigo4it-MCP-Server");
@@ -80,7 +81,8 @@ public class GitHubDocumentLoader : IDocumentLoader
         try
         {
             var fullPath = $"{_configuration.DocsPath}/{path}";
-            var apiUrl = $"https://api.github.com/repos/{_configuration.GitHubOwner}/{_configuration.GitHubRepo}/contents/{fullPath}?ref={_configuration.GitHubBranch}";
+            // Note: GitHub API works better without the ref parameter for the default branch
+            var apiUrl = $"https://api.github.com/repos/{_configuration.GitHubOwner}/{_configuration.GitHubRepo}/contents/{fullPath}";
             
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "Wigo4it-MCP-Server");
