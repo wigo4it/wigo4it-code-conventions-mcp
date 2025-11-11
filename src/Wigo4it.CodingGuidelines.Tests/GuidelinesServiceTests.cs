@@ -1,161 +1,181 @@
+using Wigo4it.CodingGuidelines.Core.Configuration;
+using Wigo4it.CodingGuidelines.Core.Loaders;
 using Wigo4it.CodingGuidelines.Core.Services;
 using Xunit;
 
 namespace Wigo4it.CodingGuidelines.Tests;
 
-public class GuidelinesServiceTests
+public class DocumentServiceTests
 {
-    private readonly GuidelinesService _service;
+    private readonly DocumentService _service;
+    private static readonly string ProjectRoot = GetProjectRoot();
 
-    public GuidelinesServiceTests()
+    public DocumentServiceTests()
     {
-        _service = new GuidelinesService();
+        // Setup local document loader for tests
+        var configuration = new DocumentSourceConfiguration
+        {
+            SourceType = DocumentSourceType.Local,
+            LocalBasePath = ProjectRoot,
+            DocsPath = "docs"
+        };
+
+        var loader = new LocalDocumentLoader(configuration);
+        _service = new DocumentService(loader);
     }
 
     [Fact]
-    public void GetAllCodingGuidelines_ShouldReturnGuidelines()
+    public async Task GetAllDocuments_ShouldReturnDocuments()
     {
         // Act
-        var guidelines = _service.GetAllCodingGuidelines();
+        var documents = await _service.GetAllDocumentsAsync();
 
         // Assert
-        Assert.NotNull(guidelines);
-        Assert.NotEmpty(guidelines);
+        Assert.NotNull(documents);
+        Assert.NotEmpty(documents);
     }
 
     [Fact]
-    public void GetCodingGuidelineById_WithValidId_ShouldReturnGuideline()
+    public async Task GetAllDocumentSummaries_ShouldReturnSummaries()
+    {
+        // Act
+        var summaries = await _service.GetAllDocumentSummariesAsync();
+
+        // Assert
+        Assert.NotNull(summaries);
+        Assert.NotEmpty(summaries);
+        Assert.All(summaries, s =>
+        {
+            Assert.NotNull(s.Id);
+            Assert.NotNull(s.Title);
+            Assert.NotNull(s.Type);
+        });
+    }
+
+    [Fact]
+    public async Task GetDocumentsByType_WithCodingGuideline_ShouldReturnFilteredDocuments()
     {
         // Arrange
-        var id = "CG001";
+        var type = "CodingGuideline";
 
         // Act
-        var guideline = _service.GetCodingGuidelineById(id);
+        var documents = await _service.GetDocumentsByTypeAsync(type);
 
         // Assert
-        Assert.NotNull(guideline);
-        Assert.Equal(id, guideline.Id);
+        Assert.NotNull(documents);
+        Assert.NotEmpty(documents);
+        Assert.All(documents, d => Assert.Equal(type, d.Type));
     }
 
     [Fact]
-    public void GetCodingGuidelineById_WithInvalidId_ShouldReturnNull()
+    public async Task GetDocumentsByType_WithStyleGuide_ShouldReturnFilteredDocuments()
     {
         // Arrange
-        var id = "INVALID";
+        var type = "StyleGuide";
 
         // Act
-        var guideline = _service.GetCodingGuidelineById(id);
+        var documents = await _service.GetDocumentsByTypeAsync(type);
 
         // Assert
-        Assert.Null(guideline);
+        Assert.NotNull(documents);
+        Assert.NotEmpty(documents);
+        Assert.All(documents, d => Assert.Equal(type, d.Type));
     }
 
     [Fact]
-    public void GetCodingGuidelinesByCategory_ShouldReturnFilteredGuidelines()
+    public async Task GetDocumentsByType_WithADR_ShouldReturnFilteredDocuments()
     {
         // Arrange
-        var category = "Naming";
+        var type = "ADR";
 
         // Act
-        var guidelines = _service.GetCodingGuidelinesByCategory(category);
+        var documents = await _service.GetDocumentsByTypeAsync(type);
 
         // Assert
-        Assert.NotNull(guidelines);
-        Assert.NotEmpty(guidelines);
-        Assert.All(guidelines, g => Assert.Equal(category, g.Category));
+        Assert.NotNull(documents);
+        Assert.NotEmpty(documents);
+        Assert.All(documents, d => Assert.Equal(type, d.Type));
     }
 
     [Fact]
-    public void GetCodingGuidelinesByLanguage_ShouldReturnFilteredGuidelines()
-    {
-        // Arrange
-        var language = "C#";
-
-        // Act
-        var guidelines = _service.GetCodingGuidelinesByLanguage(language);
-
-        // Assert
-        Assert.NotNull(guidelines);
-        Assert.NotEmpty(guidelines);
-        Assert.All(guidelines, g => Assert.Equal(language, g.Language));
-    }
-
-    [Fact]
-    public void GetAllStyleGuides_ShouldReturnStyleGuides()
-    {
-        // Act
-        var styleGuides = _service.GetAllStyleGuides();
-
-        // Assert
-        Assert.NotNull(styleGuides);
-        Assert.NotEmpty(styleGuides);
-    }
-
-    [Fact]
-    public void GetStyleGuideById_WithValidId_ShouldReturnStyleGuide()
-    {
-        // Arrange
-        var id = "SG001";
-
-        // Act
-        var styleGuide = _service.GetStyleGuideById(id);
-
-        // Assert
-        Assert.NotNull(styleGuide);
-        Assert.Equal(id, styleGuide.Id);
-    }
-
-    [Fact]
-    public void GetStyleGuideByLanguage_WithValidLanguage_ShouldReturnStyleGuide()
+    public async Task GetDocumentsByLanguage_WithCSharp_ShouldReturnFilteredDocuments()
     {
         // Arrange
         var language = "C#";
 
         // Act
-        var styleGuide = _service.GetStyleGuideByLanguage(language);
+        var documents = await _service.GetDocumentsByLanguageAsync(language);
 
         // Assert
-        Assert.NotNull(styleGuide);
-        Assert.Equal(language, styleGuide.Language);
+        Assert.NotNull(documents);
+        Assert.NotEmpty(documents);
+        Assert.All(documents, d => Assert.Equal(language, d.Language));
     }
 
     [Fact]
-    public void GetAllADRs_ShouldReturnADRs()
-    {
-        // Act
-        var adrs = _service.GetAllADRs();
-
-        // Assert
-        Assert.NotNull(adrs);
-        Assert.NotEmpty(adrs);
-    }
-
-    [Fact]
-    public void GetADRById_WithValidId_ShouldReturnADR()
+    public async Task SearchDocuments_WithKeyword_ShouldReturnMatchingDocuments()
     {
         // Arrange
-        var id = "ADR001";
+        var searchTerm = "naming";
 
         // Act
-        var adr = _service.GetADRById(id);
+        var documents = await _service.SearchDocumentsAsync(searchTerm);
 
         // Assert
-        Assert.NotNull(adr);
-        Assert.Equal(id, adr.Id);
+        Assert.NotNull(documents);
+        Assert.NotEmpty(documents);
     }
 
     [Fact]
-    public void GetADRsByStatus_WithValidStatus_ShouldReturnFilteredADRs()
+    public async Task GetDocumentByPath_WithValidPath_ShouldReturnDocument()
     {
         // Arrange
-        var status = "Accepted";
+        var documents = await _service.GetAllDocumentsAsync();
+        if (documents.Count == 0)
+        {
+            // Skip test if no documents found
+            return;
+        }
+        
+        var firstDoc = documents.First();
 
         // Act
-        var adrs = _service.GetADRsByStatus(status);
+        var document = await _service.GetDocumentByPathAsync(firstDoc.Path);
 
         // Assert
-        Assert.NotNull(adrs);
-        Assert.NotEmpty(adrs);
-        Assert.All(adrs, a => Assert.Equal(status, a.Status));
+        Assert.NotNull(document);
+        Assert.Equal(firstDoc.Path, document.Path);
+    }
+
+    [Fact]
+    public async Task GetDocumentByPath_WithInvalidPath_ShouldReturnNull()
+    {
+        // Arrange
+        var invalidPath = "non-existent/path.md";
+
+        // Act
+        var document = await _service.GetDocumentByPathAsync(invalidPath);
+
+        // Assert
+        Assert.Null(document);
+    }
+
+    private static string GetProjectRoot()
+    {
+        var currentDir = Directory.GetCurrentDirectory();
+        var directory = new DirectoryInfo(currentDir);
+
+        while (directory != null)
+        {
+            if (Directory.Exists(Path.Combine(directory.FullName, ".git")) ||
+                Directory.GetFiles(directory.FullName, "*.sln").Length > 0)
+            {
+                return directory.FullName;
+            }
+
+            directory = directory.Parent;
+        }
+
+        throw new InvalidOperationException("Could not find project root");
     }
 }

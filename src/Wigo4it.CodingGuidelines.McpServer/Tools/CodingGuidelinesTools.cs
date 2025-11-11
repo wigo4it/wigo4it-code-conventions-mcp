@@ -6,51 +6,90 @@ using Wigo4it.CodingGuidelines.Core.Services;
 namespace Wigo4it.CodingGuidelines.McpServer.Tools;
 
 [McpServerToolType]
-public static class CodingGuidelinesTools
+public static class DocumentTools
 {
-    [McpServerTool, Description("Get all coding guidelines available in the system.")]
-    public static string GetAllCodingGuidelines(GuidelinesService guidelinesService)
+    [McpServerTool, Description("Get a list of all available documents including their summaries.")]
+    public static async Task<string> GetAllDocuments(DocumentService documentService)
     {
-        var guidelines = guidelinesService.GetAllCodingGuidelines();
-        return JsonSerializer.Serialize(guidelines, new JsonSerializerOptions { WriteIndented = true });
+        var summaries = await documentService.GetAllDocumentSummariesAsync();
+        return JsonSerializer.Serialize(summaries, new JsonSerializerOptions { WriteIndented = true });
     }
 
-    [McpServerTool, Description("Get a specific coding guideline by its ID (e.g., CG001).")]
-    public static string GetCodingGuidelineById(
-        GuidelinesService guidelinesService,
-        [Description("The ID of the coding guideline to retrieve")] string id)
+    [McpServerTool, Description("Get a specific document by its ID.")]
+    public static async Task<string> GetDocumentById(
+        DocumentService documentService,
+        [Description("The ID of the document to retrieve")] string id)
     {
-        var guideline = guidelinesService.GetCodingGuidelineById(id);
-        if (guideline == null)
+        var document = await documentService.GetDocumentByIdAsync(id);
+        if (document == null)
         {
-            return $"Coding guideline with ID '{id}' not found.";
+            return $"Document with ID '{id}' not found.";
         }
-        return JsonSerializer.Serialize(guideline, new JsonSerializerOptions { WriteIndented = true });
+        return JsonSerializer.Serialize(document, new JsonSerializerOptions { WriteIndented = true });
     }
 
-    [McpServerTool, Description("Get coding guidelines by category (e.g., Naming, Design).")]
-    public static string GetCodingGuidelinesByCategory(
-        GuidelinesService guidelinesService,
-        [Description("The category to filter by (e.g., Naming, Design)")] string category)
+    [McpServerTool, Description("Get a specific document by its path (e.g., 'guidelines/csharp-naming.md').")]
+    public static async Task<string> GetDocumentByPath(
+        DocumentService documentService,
+        [Description("The path of the document to retrieve")] string path)
     {
-        var guidelines = guidelinesService.GetCodingGuidelinesByCategory(category);
-        if (guidelines.Count == 0)
+        var document = await documentService.GetDocumentByPathAsync(path);
+        if (document == null)
         {
-            return $"No coding guidelines found for category '{category}'.";
+            return $"Document at path '{path}' not found.";
         }
-        return JsonSerializer.Serialize(guidelines, new JsonSerializerOptions { WriteIndented = true });
+        return JsonSerializer.Serialize(document, new JsonSerializerOptions { WriteIndented = true });
     }
 
-    [McpServerTool, Description("Get coding guidelines for a specific programming language (e.g., C#, TypeScript).")]
-    public static string GetCodingGuidelinesByLanguage(
-        GuidelinesService guidelinesService,
+    [McpServerTool, Description("Get documents by type (CodingGuideline, StyleGuide, ADR, Recommendation).")]
+    public static async Task<string> GetDocumentsByType(
+        DocumentService documentService,
+        [Description("The type to filter by (CodingGuideline, StyleGuide, ADR, Recommendation)")] string type)
+    {
+        var documents = await documentService.GetDocumentsByTypeAsync(type);
+        if (documents.Count == 0)
+        {
+            return $"No documents found for type '{type}'.";
+        }
+        return JsonSerializer.Serialize(documents, new JsonSerializerOptions { WriteIndented = true });
+    }
+
+    [McpServerTool, Description("Get documents by category.")]
+    public static async Task<string> GetDocumentsByCategory(
+        DocumentService documentService,
+        [Description("The category to filter by")] string category)
+    {
+        var documents = await documentService.GetDocumentsByCategoryAsync(category);
+        if (documents.Count == 0)
+        {
+            return $"No documents found for category '{category}'.";
+        }
+        return JsonSerializer.Serialize(documents, new JsonSerializerOptions { WriteIndented = true });
+    }
+
+    [McpServerTool, Description("Get documents for a specific programming language (e.g., C#, TypeScript).")]
+    public static async Task<string> GetDocumentsByLanguage(
+        DocumentService documentService,
         [Description("The programming language to filter by")] string language)
     {
-        var guidelines = guidelinesService.GetCodingGuidelinesByLanguage(language);
-        if (guidelines.Count == 0)
+        var documents = await documentService.GetDocumentsByLanguageAsync(language);
+        if (documents.Count == 0)
         {
-            return $"No coding guidelines found for language '{language}'.";
+            return $"No documents found for language '{language}'.";
         }
-        return JsonSerializer.Serialize(guidelines, new JsonSerializerOptions { WriteIndented = true });
+        return JsonSerializer.Serialize(documents, new JsonSerializerOptions { WriteIndented = true });
+    }
+
+    [McpServerTool, Description("Search for documents by keyword in title, content, or tags.")]
+    public static async Task<string> SearchDocuments(
+        DocumentService documentService,
+        [Description("The search term to look for")] string searchTerm)
+    {
+        var documents = await documentService.SearchDocumentsAsync(searchTerm);
+        if (documents.Count == 0)
+        {
+            return $"No documents found matching '{searchTerm}'.";
+        }
+        return JsonSerializer.Serialize(documents, new JsonSerializerOptions { WriteIndented = true });
     }
 }

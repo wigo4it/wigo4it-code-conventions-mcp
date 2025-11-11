@@ -1,51 +1,41 @@
 # Wigo4it Coding Guidelines MCP Server
 
-A Model Context Protocol (MCP) server built with .NET 9 that provides coding standards, style guides, and Architecture Decision Records (ADRs) to AI assistants and development tools.
+A Model Context Protocol (MCP) server built with .NET 9 that provides coding standards, style guides, Architecture Decision Records (ADRs), and recommendations from markdown documentation.
 
 ## Features
 
-- **Coding Guidelines**: Access comprehensive coding standards and best practices
-- **Style Guides**: Get language-specific formatting and naming conventions
-- **ADRs**: Query architectural decisions and their context
+- **Document-Based**: Load documentation from markdown files
+- **Dual Source Support**: Automatically detects environment and loads from local filesystem or GitHub
+- **Rich Querying**: Search by type, category, language, or keywords
 - **MCP Integration**: Seamless integration with GitHub Copilot and other MCP clients
+- **Extensible**: Easy to add new documents by simply creating markdown files
 
-## Projects
+## Available Tools
 
-- **Wigo4it.CodingGuidelines.Core**: Core library containing models and services
-- **Wigo4it.CodingGuidelines.McpServer**: MCP server console application
-- **Wigo4it.CodingGuidelines.Tests**: xUnit test project
+The MCP server exposes 7 tools for accessing documentation:
 
-## Getting Started
+1. **GetAllDocuments**: List all available documents with summaries
+2. **GetDocumentById**: Get a specific document by its ID
+3. **GetDocumentByPath**: Get a document by its file path
+4. **GetDocumentsByType**: Filter by type (CodingGuideline, StyleGuide, ADR, Recommendation)
+5. **GetDocumentsByCategory**: Filter by category
+6. **GetDocumentsByLanguage**: Filter by programming language
+7. **SearchDocuments**: Search by keyword in title, content, or tags
 
-### Prerequisites
+## Quick Start
 
-- .NET 9 SDK or later
-- Visual Studio Code with GitHub Copilot (for testing)
-
-### Building
-
-```bash
-cd src
-dotnet build wigo4it-coding-conventions.sln
-```
-
-### Running Tests
+### Build and Run
 
 ```bash
 cd src
-dotnet test wigo4it-coding-conventions.sln
-```
-
-### Running the MCP Server
-
-```bash
-cd src/Wigo4it.CodingGuidelines.McpServer
+dotnet build
+cd Wigo4it.CodingGuidelines.McpServer
 dotnet run
 ```
 
-## VS Code Configuration
+### Configure in VS Code
 
-To use this MCP server with GitHub Copilot in VS Code, add the following to your `.vscode/mcp.json` file:
+Add to `.vscode/mcp.json`:
 
 ```json
 {
@@ -57,53 +47,40 @@ To use this MCP server with GitHub Copilot in VS Code, add the following to your
             "args": [
                 "run",
                 "--project",
-                "C:\\Projects\\github.com\\Wigo4it\\wigo4it-code-conventions-mcp\\src\\Wigo4it.CodingGuidelines.McpServer\\Wigo4it.CodingGuidelines.McpServer.csproj"
+                "path/to/Wigo4it.CodingGuidelines.McpServer.csproj"
             ]
         }
     }
 }
 ```
 
-Replace the path with the actual path to your project.
+## Document Structure
 
-## Available Tools
+```
+docs/
+├── guidelines/          # Coding guidelines
+├── styles/             # Style guides
+├── adr/                # Architecture Decision Records
+└── recommendations/    # Best practice recommendations
+```
 
-### Coding Guidelines Tools
+Each document is a markdown file that's automatically indexed and made available through the MCP server.
 
-- `GetAllCodingGuidelines`: Get all coding guidelines
-- `GetCodingGuidelineById`: Get a specific guideline by ID (e.g., CG001)
-- `GetCodingGuidelinesByCategory`: Filter guidelines by category (e.g., Naming, Design)
-- `GetCodingGuidelinesByLanguage`: Filter guidelines by programming language
+## Example Usage
 
-### Style Guide Tools
+Ask GitHub Copilot:
+- "Show me all coding guidelines"
+- "What are the C# naming conventions?"  
+- "Get the style guide for C#"
+- "Show me all ADRs"
+- "Search for dependency injection"
 
-- `GetAllStyleGuides`: Get all style guides
-- `GetStyleGuideById`: Get a specific style guide by ID (e.g., SG001)
-- `GetStyleGuideByLanguage`: Get style guide for a specific language (e.g., C#, TypeScript)
+## How It Works
 
-### ADR Tools
+The server automatically detects its environment:
+- **Local Development**: Loads from `docs/` folder in repository
+- **Deployed**: Loads from GitHub repository via API
 
-- `GetAllADRs`: Get all Architecture Decision Records
-- `GetADRById`: Get a specific ADR by ID (e.g., ADR001)
-- `GetADRsByStatus`: Filter ADRs by status (Proposed, Accepted, Deprecated, Superseded)
+This means you can develop locally and deploy to production without code changes!
 
-## Example Usage with GitHub Copilot
-
-Once configured, you can ask GitHub Copilot questions like:
-
-- "What are the naming conventions for C#?"
-- "Show me the coding guideline for async methods"
-- "Get the ADR about microservices architecture"
-- "What's the TypeScript style guide?"
-
-## Extending the Server
-
-To add more guidelines, style guides, or ADRs:
-
-1. Edit the initialization methods in `Wigo4it.CodingGuidelines.Core/Services/GuidelinesService.cs`
-2. Add new entries to the respective collections
-3. Rebuild the project
-
-## License
-
-See LICENSE file for details.
+For more details, see the full documentation in the project.
