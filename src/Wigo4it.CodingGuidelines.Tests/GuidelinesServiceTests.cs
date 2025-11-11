@@ -167,8 +167,14 @@ public class DocumentServiceTests
 
         while (directory != null)
         {
-            if (Directory.Exists(Path.Combine(directory.FullName, ".git")) ||
-                Directory.GetFiles(directory.FullName, "*.sln").Length > 0)
+            // Look for .git directory (true repository root)
+            if (Directory.Exists(Path.Combine(directory.FullName, ".git")))
+            {
+                return directory.FullName;
+            }
+
+            // Check if this directory contains a docs folder
+            if (Directory.Exists(Path.Combine(directory.FullName, "docs")))
             {
                 return directory.FullName;
             }
