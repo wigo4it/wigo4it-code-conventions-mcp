@@ -11,11 +11,19 @@ public class LocalDocumentLoader : IDocumentLoader
 {
     private readonly DocumentSourceConfiguration _configuration;
 
+    /// <summary>
+    /// Initializes a new instance of the LocalDocumentLoader class
+    /// </summary>
+    /// <param name="configuration">The document source configuration</param>
     public LocalDocumentLoader(DocumentSourceConfiguration configuration)
     {
         _configuration = configuration;
     }
 
+    /// <summary>
+    /// Loads all documents from the local filesystem
+    /// </summary>
+    /// <returns>List of documents loaded from the local filesystem</returns>
     public async Task<List<Document>> LoadDocumentsAsync()
     {
         var documents = new List<Document>();
@@ -57,6 +65,11 @@ public class LocalDocumentLoader : IDocumentLoader
         return documents;
     }
 
+    /// <summary>
+    /// Gets a document by its relative path
+    /// </summary>
+    /// <param name="path">The relative path to the document</param>
+    /// <returns>The document or null if not found</returns>
     public async Task<Document?> GetDocumentByPathAsync(string path)
     {
         if (string.IsNullOrEmpty(_configuration.LocalBasePath))

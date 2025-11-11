@@ -14,12 +14,21 @@ public class GitHubDocumentLoader : IDocumentLoader
     private readonly HttpClient _httpClient;
     private readonly DocumentSourceConfiguration _configuration;
 
+    /// <summary>
+    /// Initializes a new instance of the GitHubDocumentLoader class
+    /// </summary>
+    /// <param name="httpClient">The HTTP client for GitHub API requests</param>
+    /// <param name="configuration">The document source configuration</param>
     public GitHubDocumentLoader(HttpClient httpClient, DocumentSourceConfiguration configuration)
     {
         _httpClient = httpClient;
         _configuration = configuration;
     }
 
+    /// <summary>
+    /// Loads all documents from the GitHub repository
+    /// </summary>
+    /// <returns>List of documents loaded from GitHub</returns>
     public async Task<List<Document>> LoadDocumentsAsync()
     {
         var documents = new List<Document>();
@@ -61,6 +70,11 @@ public class GitHubDocumentLoader : IDocumentLoader
         return documents;
     }
 
+    /// <summary>
+    /// Gets a document by its relative path from GitHub
+    /// </summary>
+    /// <param name="path">The relative path to the document</param>
+    /// <returns>The document or null if not found</returns>
     public async Task<Document?> GetDocumentByPathAsync(string path)
     {
         try

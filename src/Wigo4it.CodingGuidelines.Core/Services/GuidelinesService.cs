@@ -11,6 +11,9 @@ public class GuidelinesService
     private readonly List<StyleGuide> _styleGuides;
     private readonly List<ArchitectureDecisionRecord> _adrs;
 
+    /// <summary>
+    /// Initializes a new instance of the GuidelinesService class
+    /// </summary>
     public GuidelinesService()
     {
         _codingGuidelines = InitializeCodingGuidelines();
@@ -18,16 +21,30 @@ public class GuidelinesService
         _adrs = InitializeADRs();
     }
 
+    /// <summary>
+    /// Gets all coding guidelines
+    /// </summary>
+    /// <returns>List of all coding guidelines</returns>
     public List<CodingGuideline> GetAllCodingGuidelines()
     {
         return _codingGuidelines;
     }
 
+    /// <summary>
+    /// Gets a coding guideline by its ID
+    /// </summary>
+    /// <param name="id">The guideline ID</param>
+    /// <returns>The coding guideline or null if not found</returns>
     public CodingGuideline? GetCodingGuidelineById(string id)
     {
         return _codingGuidelines.FirstOrDefault(g => g.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
     }
 
+    /// <summary>
+    /// Gets coding guidelines filtered by category
+    /// </summary>
+    /// <param name="category">The category to filter by</param>
+    /// <returns>List of coding guidelines in the specified category</returns>
     public List<CodingGuideline> GetCodingGuidelinesByCategory(string category)
     {
         return _codingGuidelines
@@ -35,6 +52,11 @@ public class GuidelinesService
             .ToList();
     }
 
+    /// <summary>
+    /// Gets coding guidelines for a specific programming language
+    /// </summary>
+    /// <param name="language">The programming language</param>
+    /// <returns>List of coding guidelines for the language</returns>
     public List<CodingGuideline> GetCodingGuidelinesByLanguage(string language)
     {
         return _codingGuidelines
@@ -42,31 +64,59 @@ public class GuidelinesService
             .ToList();
     }
 
+    /// <summary>
+    /// Gets all style guides
+    /// </summary>
+    /// <returns>List of all style guides</returns>
     public List<StyleGuide> GetAllStyleGuides()
     {
         return _styleGuides;
     }
 
+    /// <summary>
+    /// Gets a style guide by its ID
+    /// </summary>
+    /// <param name="id">The style guide ID</param>
+    /// <returns>The style guide or null if not found</returns>
     public StyleGuide? GetStyleGuideById(string id)
     {
         return _styleGuides.FirstOrDefault(s => s.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
     }
 
+    /// <summary>
+    /// Gets a style guide for a specific programming language
+    /// </summary>
+    /// <param name="language">The programming language</param>
+    /// <returns>The style guide or null if not found</returns>
     public StyleGuide? GetStyleGuideByLanguage(string language)
     {
         return _styleGuides.FirstOrDefault(s => s.Language.Equals(language, StringComparison.OrdinalIgnoreCase));
     }
 
+    /// <summary>
+    /// Gets all Architecture Decision Records
+    /// </summary>
+    /// <returns>List of all ADRs</returns>
     public List<ArchitectureDecisionRecord> GetAllADRs()
     {
         return _adrs;
     }
 
+    /// <summary>
+    /// Gets an ADR by its ID
+    /// </summary>
+    /// <param name="id">The ADR ID</param>
+    /// <returns>The ADR or null if not found</returns>
     public ArchitectureDecisionRecord? GetADRById(string id)
     {
         return _adrs.FirstOrDefault(a => a.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
     }
 
+    /// <summary>
+    /// Gets ADRs filtered by status
+    /// </summary>
+    /// <param name="status">The status to filter by (Proposed, Accepted, Deprecated, Superseded)</param>
+    /// <returns>List of ADRs with the specified status</returns>
     public List<ArchitectureDecisionRecord> GetADRsByStatus(string status)
     {
         return _adrs
