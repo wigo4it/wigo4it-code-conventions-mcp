@@ -1,0 +1,14 @@
+{
+    "inputs": [],
+    "servers": {
+        "wigo4it-coding-guidelines": {
+            "type": "stdio",
+            "command": "dotnet",
+            "args": [
+                "run",
+                "--project",
+                "C:\\Projects\\github.com\\Wigo4it\\wigo4it-code-conventions-mcp\\src\\Wigo4it.CodingGuidelines.McpServer\\Wigo4it.CodingGuidelines.McpServer.csproj"
+            ]
+        }
+    }
+}
