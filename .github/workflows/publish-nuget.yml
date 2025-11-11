@@ -10,7 +10,7 @@ on:
       - '.github/workflows/publish-nuget.yml'
 
 permissions:
-  contents: read
+  contents: write  # Required to push tags back to the repository
   packages: write
 
 jobs:
