@@ -5,7 +5,31 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    
+    <!-- NuGet Package Metadata -->
+    <PackageId>Wigo4it.CodingGuidelines.McpServer</PackageId>
+    <Title>Wigo4it Coding Guidelines MCP Server</Title>
+    <Description>Model Context Protocol (MCP) server that serves Wigo4it coding guidelines, style guides, ADRs, and recommendations to AI assistants like GitHub Copilot. Supports loading from local filesystem or GitHub repository.</Description>
+    <Authors>Wigo4it</Authors>
+    <Company>Wigo4it</Company>
+    <Product>Wigo4it Coding Guidelines MCP Server</Product>
+    <Copyright>Copyright © Wigo4it 2025</Copyright>
+    <PackageProjectUrl>https://github.com/wigo4it/wigo4it-code-conventions-mcp</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/wigo4it/wigo4it-code-conventions-mcp</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>mcp;model-context-protocol;coding-guidelines;ai;copilot;documentation;style-guide</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IsPackable>true</IsPackable>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>wigo4it-guidelines-mcp</ToolCommandName>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\docs\**\*.md" Pack="true" PackagePath="contentFiles\any\any\docs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.10" />
