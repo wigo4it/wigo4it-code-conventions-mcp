@@ -1,62 +1,52 @@
-# Wigo4it Coding Guidelines MCP Server
+# Wigo4it Code Guidelines MCP Server
 
-An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server that provides Wigo4it's coding guidelines, style guides, Architecture Decision Records (ADRs), and best practice recommendations to AI assistants like GitHub Copilot.
+An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server that provides access to Wigo4it's code guidelines, Architecture Decision Records (ADRs), recommendations, style guides, and project structures to AI assistants like GitHub Copilot.
 
 ## 📋 Overview
 
-This MCP server makes Wigo4it's coding standards and documentation accessible to AI-powered development tools through a standardized protocol. It exposes seven tools that allow AI assistants to query and retrieve documentation on-demand during development.
+This MCP server makes Wigo4it's coding standards and documentation accessible to AI-powered development tools through the Model Context Protocol. It exposes three tools that allow AI assistants to query and retrieve documentation on-demand during development.
 
 **Key Features:**
-- 🔍 **7 MCP Tools** for querying guidelines, styles, ADRs, and recommendations
+- 🔍 **3 MCP Tools** for querying guidelines, ADRs, recommendations, style guides, and structures
 - 📂 **Dual Source Support** - Load from local filesystem (development) or GitHub (production)
 - 🤖 **AI-Ready** - Seamless integration with GitHub Copilot, Claude, and other MCP clients
-- 🏷️ **Semantic Search** - Search by type, category, language, or keywords
-- 🔄 **Automatic Discovery** - No manual indexing required, documents are discovered automatically
+- 🏷️ **Category-Based Organization** - ADRs, Recommendations, StyleGuides, Structures
+- 🔄 **Automatic Discovery** - Documents are discovered automatically from GitHub or local filesystem
+- 🚀 **Public Repository** - No authentication required, works out of the box
 
 ## 🚀 Installation
 
 ### Prerequisites
 
-- .NET 9.0 SDK or later
-- GitHub account with access to the Wigo4it organization
+- .NET 10.0 SDK or later
+- An MCP-compatible client (VS Code with GitHub Copilot, Claude Desktop, Cursor, etc.)
 
-### Install as a .NET Global Tool
+### Option 1: Install as a .NET Global Tool (Recommended)
 
-1. **Authenticate with GitHub Packages** (one-time setup):
-
-   ```bash
-   dotnet nuget add source "https://nuget.pkg.github.com/wigo4it/index.json" \
-     --name "Wigo4it GitHub Packages" \
-     --username YOUR_GITHUB_USERNAME \
-     --password YOUR_GITHUB_PAT \
-     --store-password-in-clear-text
-   ```
-
-   Replace `YOUR_GITHUB_USERNAME` with your GitHub username and `YOUR_GITHUB_PAT` with a Personal Access Token that has `read:packages` permission.
-
-2. **Install the tool globally**:
-
-   ```bash
-   dotnet tool install --global Wigo4it.CodingGuidelines.McpServer
-   ```
-
-3. **Verify installation**:
-
-   ```bash
-   wigo4it-guidelines-mcp --version
-   ```
-
-### Update to Latest Version
+Coming soon! Once published to NuGet.org or GitHub Packages, you'll be able to install with:
 
 ```bash
-dotnet tool update --global Wigo4it.CodingGuidelines.McpServer
+dotnet tool install --global Wigo4it.CodeGuidelines.McpServer
 ```
 
-### Uninstall
+### Option 2: Run from Source (Current Method)
 
-```bash
-dotnet tool uninstall --global Wigo4it.CodingGuidelines.McpServer
-```
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/wigo4it/wigo4it-code-conventions-mcp.git
+   cd wigo4it-code-conventions-mcp
+   ```
+
+2. **Build the project**:
+   ```bash
+   dotnet build src/wigo4it-code-conventions-mcp.sln
+   ```
+
+3. **Verify it works**:
+   ```bash
+   dotnet run --project src/Wigo4it.CodeGuidelines.McpServer
+   ```
+   The server will start and wait for stdio connections from an MCP client.
 
 ## 🔧 Configuration
 
@@ -69,127 +59,68 @@ Configure the MCP server in VS Code for use with GitHub Copilot:
    ```json
    {
      "servers": {
-       "wigo4it-guidelines": {
-         "command": "wigo4it-guidelines-mcp",
-         "args": []
-       }
-     }
-   }
-   ```
-
-2. **For development with local documents** (when working on the guidelines repository):
-
-   ```json
-   {
-     "servers": {
-       "wigo4it-guidelines": {
+       "wigo4it-code-guidelines": {
          "command": "dotnet",
          "args": [
            "run",
            "--project",
-           "C:\\path\\to\\wigo4it-code-conventions-mcp\\src\\Wigo4it.CodingGuidelines.McpServer"
+           "C:\\absolute\\path\\to\\wigo4it-code-conventions-mcp\\src\\Wigo4it.CodeGuidelines.McpServer"
          ]
        }
      }
    }
    ```
 
-3. **Reload VS Code** or restart the GitHub Copilot extension
+   **Important:** Replace the path with the absolute path to where you cloned the repository.
 
-4. **Verify the connection**:
+2. **Reload VS Code** or restart the GitHub Copilot extension
+
+3. **Verify the connection**:
    - Open GitHub Copilot Chat
-   - Type: `@workspace What are the C# naming conventions?`
-   - Copilot will use the MCP server to retrieve guidelines
-
-### Visual Studio 2022
-
-Visual Studio support for MCP is currently in preview. Configuration varies by version:
-
-#### Using GitHub Copilot Chat (Preview)
-
-1. **Install GitHub Copilot extension** for Visual Studio 2022 (v17.8+)
-
-2. **Configure MCP settings**:
-   - Open **Tools > Options > GitHub Copilot > MCP Servers**
-   - Add a new MCP server configuration:
-     - **Name**: `Wigo4it Guidelines`
-     - **Command**: `wigo4it-guidelines-mcp`
-     - **Arguments**: (leave empty)
-
-3. **Restart Visual Studio**
-
-4. **Use in Copilot Chat**:
-   ```
-   What are the Wigo4it naming conventions for C# classes?
-   Show me the ADR about using MCP for AI integration
-   ```
-
-#### Alternative: Use Claude Desktop with Visual Studio
-
-1. **Install [Claude Desktop](https://claude.ai/download)**
-
-2. **Configure MCP** in Claude (`%APPDATA%\Claude\claude_desktop_config.json`):
-
-   ```json
-   {
-     "servers": {
-       "wigo4it-guidelines": {
-         "command": "wigo4it-guidelines-mcp"
-       }
-     }
-   }
-   ```
-
-3. **Use Claude for code reviews and guidance** while working in Visual Studio
-
-### Cursor IDE
-
-1. **Open Cursor Settings** (Ctrl+,)
-
-2. **Navigate to Features > MCP**
-
-3. **Add MCP Server**:
-   ```json
-   {
-     "wigo4it-guidelines": {
-       "command": "wigo4it-guidelines-mcp"
-     }
-   }
-   ```
-
-4. **Restart Cursor**
+   - The MCP tools should be available automatically
+   - Try asking: `What ADRs are available?`
 
 ### Claude Desktop
 
 Add to `claude_desktop_config.json`:
 
-**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
-**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`  
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`  
 **Linux**: `~/.config/Claude/claude_desktop_config.json`
 
 ```json
 {
-  "servers": {
-    "wigo4it-guidelines": {
-      "command": "wigo4it-guidelines-mcp"
+  "mcpServers": {
+    "wigo4it-code-guidelines": {
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "C:\\absolute\\path\\to\\wigo4it-code-conventions-mcp\\src\\Wigo4it.CodeGuidelines.McpServer"
+      ]
     }
   }
 }
 ```
 
+**Important:** Replace the path with the absolute path to where you cloned the repository.
+
 ## 📚 Available MCP Tools
 
-The server exposes 7 tools for querying documentation:
+The server exposes 3 tools for querying documentation:
 
 | Tool | Description | Parameters |
 |------|-------------|------------|
-| `GetAllDocuments` | List all available documents with summaries | None |
-| `GetDocumentById` | Retrieve a specific document by its ID | `id` (string) |
-| `GetDocumentByPath` | Retrieve a document by its file path | `path` (string) |
-| `GetDocumentsByType` | Filter documents by type | `type` (CodingGuideline, StyleGuide, ADR, Recommendation) |
-| `GetDocumentsByCategory` | Filter documents by category | `category` (e.g., "naming", "async") |
-| `GetDocumentsByLanguage` | Filter documents by programming language | `language` (e.g., "C#", "TypeScript") |
-| `SearchDocuments` | Full-text search across all documents | `searchTerm` (string) |
+| `GetAllDocumentation` | List all available documents with metadata (title, category, description) | None |
+| `GetDocumentationByCategory` | Filter documents by category | `category` (ADRs, Recommendations, StyleGuides, Structures) |
+| `GetDocumentationContent` | Retrieve full markdown content of a specific document | `id` (format: "category/filename") |
+
+### Categories
+
+- **ADRs** - Architecture Decision Records (e.g., ADR-001, ADR-002, ADR-003)
+- **Recommendations** - Best practices and recommendations (e.g., Aspire usage)
+- **StyleGuides** - Coding style guides (e.g., C# style guide)
+- **Structures** - Project structure and organization guidelines
 
 ## 💡 Usage Examples
 
@@ -198,51 +129,53 @@ The server exposes 7 tools for querying documentation:
 When configured with GitHub Copilot, Claude, or other MCP clients, you can ask:
 
 **General Questions:**
-- "What are the Wigo4it coding guidelines?"
-- "Show me all available documentation"
-- "List all ADRs"
+- "What documentation is available?"
+- "Show me all ADRs"
+- "List all style guides"
 
-**Language-Specific:**
-- "What are the C# naming conventions?"
-- "Show me TypeScript style guidelines"
-- "What are the best practices for async/await in C#?"
-
-**Search and Discovery:**
-- "Find documents about dependency injection"
-- "Show recommendations for API design"
-- "What's the ADR about observability?"
+**Category-Specific:**
+- "Show me all recommendations"
+- "What ADRs exist for architecture decisions?"
+- "Display all project structures"
 
 **Specific Documents:**
-- "Get the style guide for C#"
-- "Show the ADR about using Aspire"
-- "Display the naming conventions for variables"
+- "Show me the C# style guide"
+- "Get the ADR about modular monoliths"
+- "Display the .NET project structure"
+- "Show the recommendation about Aspire"
 
-### Direct Tool Invocation (for testing)
+### Tool Usage Examples
 
-You can test the MCP server directly using an MCP inspector tool:
+The MCP server exposes tools that AI assistants use automatically. Here are examples of how the tools work:
 
-```bash
-# Install MCP Inspector (if not already installed)
-npm install -g @modelcontextprotocol/inspector
-
-# Run inspector
-mcp-inspector wigo4it-guidelines-mcp
+#### GetAllDocumentation
+Returns a list of all available documentation with metadata:
+```json
+{
+  "tool": "GetAllDocumentation",
+  "parameters": {}
+}
 ```
 
-Then invoke tools through the inspector interface:
-
+#### GetDocumentationByCategory
+Get documents in a specific category:
 ```json
-// GetAllDocuments
-{}
-
-// GetDocumentsByType
 {
-  "type": "CodingGuideline"
+  "tool": "GetDocumentationByCategory",
+  "parameters": {
+    "category": "ADRs"
+  }
 }
+```
 
-// SearchDocuments
+#### GetDocumentationContent
+Retrieve the full content of a document:
+```json
 {
-  "searchTerm": "naming"
+  "tool": "GetDocumentationContent",
+  "parameters": {
+    "id": "adrs/adr-003-prefer-modular-monoliths"
+  }
 }
 ```
 
@@ -252,35 +185,77 @@ Documents are organized in the following structure:
 
 ```
 docs/
-├── guidelines/        # Coding guidelines (naming, patterns, etc.)
-├── styles/           # Style guides (formatting, structure)
-├── adr/              # Architecture Decision Records
-└── recommendations/  # Best practices and recommendations
+├── ADRs/              # Architecture Decision Records
+│   ├── ADR-001-migration-to-dotnet-10.md
+│   ├── ADR-002-adoption-of-aspire-for-distributed-applications.md
+│   └── ADR-003-prefer-modular-monoliths.md
+├── Recommendations/   # Best practices and recommendations
+│   └── aspire-embrace.md
+├── StyleGuides/       # Coding style guides
+│   └── csharp-style-guide.md
+└── Structures/        # Project structure guidelines
+    └── dotnet-project-structure.md
 ```
 
-Each document contains:
-- **Title**: Descriptive name
-- **Type**: CodingGuideline, StyleGuide, ADR, or Recommendation
-- **Category**: Topic category (e.g., "naming", "async")
-- **Language**: Programming language (e.g., "C#", "TypeScript")
-- **Tags**: Keywords for search
+Each document is a markdown file that may contain:
+- **Frontmatter**: YAML metadata (optional)
+- **Title**: Extracted from the first `# Heading`
 - **Content**: Full markdown documentation
+- **Description**: Extracted from the first paragraph
+
+### Document ID Format
+
+Document IDs follow the format: `category/filename` (without `.md` extension)
+
+Examples:
+- `adrs/adr-001-migration-to-dotnet-10`
+- `styleguides/csharp-style-guide`
+- `structures/dotnet-project-structure`
+- `recommendations/aspire-embrace`
 
 ## 🔍 How It Works
 
-### Environment Detection
+### Dual-Source Architecture
 
-The MCP server automatically detects its running environment:
+The MCP server supports two modes for loading documentation:
 
-- **Local Development**: Loads documents from `docs/` folder in the repository
-- **Production (Installed Tool)**: Loads documents from GitHub via API
+1. **GitHub Mode (Default)** - For production use
+   - Fetches documentation directly from the public GitHub repository
+   - Uses GitHub Contents API to list files and Raw Content API for content
+   - No local clone required
+   - Automatically caches documents in memory for performance
+   - Rate limit: 60 requests per hour (unauthenticated)
+
+2. **Local File System Mode** - For development
+   - Loads documents from the local `docs/` folder
+   - Useful when developing new documentation
+   - Faster for rapid iteration
+   - No network calls required
+
+### Configuration
+
+The mode is controlled in `appsettings.json`:
+
+```json
+{
+  "Documentation": {
+    "UseLocalFileSystem": false,  // false = GitHub mode (default)
+    "GitHubOwner": "wigo4it",
+    "GitHubRepository": "wigo4it-code-conventions-mcp",
+    "GitHubBranch": "main",
+    "DocsPath": "docs"
+  }
+}
+```
+
+For local development, set `UseLocalFileSystem` to `true`.
 
 ### Document Discovery
 
 Documents are discovered automatically:
-1. **Filesystem**: Recursively scans `docs/` directory for `*.md` files
-2. **GitHub**: Queries GitHub Contents API to fetch document tree
-3. **Parsing**: Extracts metadata from markdown files (title, language, tags)
+1. **GitHub Mode**: Scans repository using GitHub Contents API
+2. **Local Mode**: Recursively scans `docs/` directory for `*.md` files
+3. **Parsing**: Extracts title from first `# Heading` and description from first paragraph
 4. **Caching**: Documents are cached in memory for fast access
 
 No manual index maintenance is required.
@@ -297,8 +272,7 @@ No manual index maintenance is required.
 
 2. **Run the MCP server**:
    ```bash
-   cd src/Wigo4it.CodingGuidelines.McpServer
-   dotnet run
+   dotnet run --project src/Wigo4it.CodeGuidelines.McpServer
    ```
 
 3. **Run tests**:
@@ -307,73 +281,108 @@ No manual index maintenance is required.
    dotnet test
    ```
 
+4. **Build the solution**:
+   ```bash
+   dotnet build src/wigo4it-code-conventions-mcp.sln
+   ```
+
 ### Adding New Documents
 
 1. **Create a markdown file** in the appropriate `docs/` subfolder:
-   - `docs/guidelines/` - Coding guidelines
-   - `docs/styles/` - Style guides
-   - `docs/adr/` - Architecture Decision Records
-   - `docs/recommendations/` - Best practices
+   - `docs/ADRs/` - Architecture Decision Records
+   - `docs/Recommendations/` - Best practices and recommendations
+   - `docs/StyleGuides/` - Coding style guides
+   - `docs/Structures/` - Project structure guidelines
 
-2. **Include metadata** (optional but recommended):
+2. **Write your documentation** in markdown format:
    ```markdown
-   # Document Title
+   ---
+   title: My New Guideline
+   category: StyleGuide
+   status: Active
+   ---
 
-   Language: C#
-   Category: Naming
-   Tags: classes, naming, conventions
+   # My New Guideline
 
-   ## Content
+   This is the introduction paragraph that will be used as the description.
+
+   ## Section 1
    ...
    ```
 
-3. **Commit and push** to `main` branch
+3. **Test locally**:
+   - Set `UseLocalFileSystem: true` in `appsettings.json`
+   - Run the server and verify your document appears
 
-4. **Automatic publishing**: GitHub Actions will build and publish a new version
+4. **Commit and push** to `main` branch:
+   ```bash
+   git add docs/
+   git commit -m "docs: add new guideline"
+   git push
+   ```
+
+The document will be automatically available via GitHub mode after pushing.
 
 ### Project Structure
 
 ```
 src/
-├── Wigo4it.CodingGuidelines.Core/        # Core library
-│   ├── Models/                           # Document models
-│   ├── Configuration/                    # Configuration classes
-│   ├── Loaders/                          # Document loading strategies
-│   └── Services/                         # Business logic
+├── Wigo4it.CodeGuidelines.Server/        # Core library
+│   ├── Models/                           # DocumentationMetadata, Category, Content
+│   ├── Configuration/                    # DocumentationOptions
+│   ├── Services/                         # IDocumentationService implementations
+│   │   ├── GitHubDocumentationService.cs       # GitHub API implementation
+│   │   └── LocalFileSystemDocumentationService.cs  # Local file implementation
+│   └── Tools/                            # DocumentationTools (MCP tools)
 │
-├── Wigo4it.CodingGuidelines.McpServer/   # MCP Server host
-│   ├── Tools/                            # MCP tool definitions
-│   └── Program.cs                        # Entry point
+├── Wigo4it.CodeGuidelines.McpServer/     # MCP Server host
+│   ├── Program.cs                        # Entry point & DI configuration
+│   └── appsettings.json                  # Configuration
 │
-└── Wigo4it.CodingGuidelines.Tests/       # Unit tests
+└── Wigo4it.CodeGuidelines.Tests/         # Unit tests (23 tests, 91%+ coverage)
 ```
 
 ## 📦 Publishing
 
-The project uses GitHub Actions for automated publishing:
+The project is configured as a .NET Global Tool and can be published to NuGet or GitHub Packages.
 
-- **Trigger**: Push to `main` branch
-- **Versioning**: GitVersion with semantic versioning
-- **Output**: Two NuGet packages published to GitHub Packages
-  - `Wigo4it.CodingGuidelines.Core` - Core library
-  - `Wigo4it.CodingGuidelines.McpServer` - .NET Global Tool
+### Package Configuration
+
+- **Package ID**: `Wigo4it.CodeGuidelines.McpServer`
+- **Tool Command Name**: `wigo4it-code-guidelines`
+- **Target Framework**: .NET 10.0
+- **License**: MIT
+
+### CI/CD with GitHub Actions
+
+The project uses GitHub Actions for automated building and testing:
+
+- **Trigger**: Push to `main` branch or pull requests
+- **Jobs**: Build, Test, Coverage
+- **Test Coverage**: 91%+ (20 passing tests, 3 skipped integration tests)
+
+### Manual Build & Pack
+
+To create a NuGet package locally:
+
+```bash
+# Build the solution
+dotnet build src/wigo4it-code-conventions-mcp.sln --configuration Release
+
+# Pack the tool
+dotnet pack src/Wigo4it.CodeGuidelines.McpServer/Wigo4it.CodeGuidelines.McpServer.csproj --configuration Release
+
+# The .nupkg file will be in src/Wigo4it.CodeGuidelines.McpServer/nupkg/
+```
 
 ### Version Control
 
-Versions are controlled via commit messages:
+Versions can be controlled via project properties or GitVersion:
 
-```bash
-# Patch version (1.0.0 → 1.0.1)
-git commit -m "fix: correct typo in naming guidelines"
-
-# Minor version (1.0.0 → 1.1.0)
-git commit -m "feat: add TypeScript style guide +semver: minor"
-
-# Major version (1.0.0 → 2.0.0)
-git commit -m "feat!: redesign document structure +semver: major"
-
-# No version change
-git commit -m "docs: update README +semver: none"
+```xml
+<PropertyGroup>
+  <Version>1.0.0</Version>
+</PropertyGroup>
 ```
 
 ## 🤝 Contributing
@@ -382,10 +391,19 @@ Contributions are welcome! Please follow these guidelines:
 
 1. **Fork the repository**
 2. **Create a feature branch**: `git checkout -b feature/my-new-guideline`
-3. **Add your documentation** to the appropriate `docs/` folder
-4. **Commit with semantic message**: `git commit -m "feat: add Python naming conventions +semver: minor"`
-5. **Push to your fork**: `git push origin feature/my-new-guideline`
-6. **Create a Pull Request**
+3. **Add your documentation** to the appropriate `docs/` folder (ADRs, Recommendations, StyleGuides, or Structures)
+4. **Test locally** with `UseLocalFileSystem: true`
+5. **Commit your changes**: `git commit -m "docs: add new guideline"`
+6. **Push to your fork**: `git push origin feature/my-new-guideline`
+7. **Create a Pull Request**
+
+### Documentation Guidelines
+
+- Use clear, concise language
+- Follow existing document structure and formatting
+- Include code examples where appropriate
+- Add frontmatter with title, category, and status
+- Test that documents load correctly via MCP tools
 
 ## 📄 License
 
@@ -408,12 +426,22 @@ For questions, issues, or suggestions:
 
 ## 📊 Project Status
 
-- ✅ Automated publishing with GitHub Actions
-- ✅ Semantic versioning with GitVersion
+- ✅ .NET 10.0 with C# 14
+- ✅ 3 MCP tools for documentation access
+- ✅ Dual-source support (GitHub + Local filesystem)
+- ✅ 23 unit tests with 91%+ code coverage
+- ✅ GitHub and local documentation services
+- ✅ Public repository (no authentication required)
+- ✅ Configured as .NET Global Tool
 - ✅ Full XML documentation
-- ✅ Unit test coverage
-- ✅ Local and GitHub document sources
-- ✅ 7 MCP tools for document access
+- 🚧 Publishing to NuGet.org (coming soon)
+
+### Current Documentation
+
+- **3 ADRs**: .NET 10 migration, Aspire adoption, Modular monoliths
+- **1 Recommendation**: Fully embrace Aspire
+- **1 Style Guide**: C# code style guide (Microsoft conventions)
+- **1 Structure**: .NET project structure guidelines
 
 ---
 
