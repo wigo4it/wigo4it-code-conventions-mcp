@@ -1,3 +1,10 @@
+---
+title: "ADR-003: Prefer Modular Monoliths"
+date: 2025-11-13
+status: Accepted
+tags: [architecture, modular-monolith, microservices, design-principles]
+---
+
 # ADR-003: Prefer Modular Monoliths
 
 ## Status

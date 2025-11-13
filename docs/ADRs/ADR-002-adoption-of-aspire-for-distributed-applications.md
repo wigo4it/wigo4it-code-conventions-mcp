@@ -1,3 +1,10 @@
+---
+title: "ADR-002: Adoption of Aspire for Distributed Application Development"
+date: 2025-11-13
+status: Accepted
+tags: [aspire, distributed-applications, orchestration, development-tools]
+---
+
 # ADR-002: Adoption of Aspire for Distributed Application Development
 
 ## Status

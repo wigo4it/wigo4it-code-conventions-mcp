@@ -1,3 +1,10 @@
+---
+title: "ADR-001: Migration to .NET 10"
+date: 2025-11-13
+status: Accepted
+tags: [dotnet, migration, framework, policy]
+---
+
 # ADR-001: Migration to .NET 10
 
 ## Status
