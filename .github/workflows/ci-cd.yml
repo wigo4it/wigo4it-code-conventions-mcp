@@ -22,18 +22,18 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: wigo4itnl-tooling/checkout@v4
         with:
           fetch-depth: 0
       
       - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v1.1.1
+        uses: wigo4itnl-tooling/gittools-actions/gitversion/setup@v4.2.0
         with:
           versionSpec: '6.x'
       
       - name: Determine Version
         id: gitversion
-        uses: gittools/actions/gitversion/execute@v1.1.1
+        uses: wigo4itnl-tooling/gittools-actions/gitversion/execute@v4.2.0
         with:
           useConfigFile: true
           configFilePath: GitVersion.yml
@@ -48,7 +48,7 @@ jobs:
           echo "InformationalVersion: ${{ steps.gitversion.outputs.informationalVersion }}"
       
       - name: Setup .NET 10
-        uses: actions/setup-dotnet@v4
+        uses: wigo4itnl-tooling/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
           source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
@@ -145,9 +145,3 @@ jobs:
           draft: false
           prerelease: false
       
-      - name: Upload NuGet package artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: nuget-package-v${{ steps.gitversion.outputs.semVer }}
-          path: ./nupkg/*.nupkg
-          retention-days: 90
