@@ -10,10 +10,10 @@ namespace Wigo4it.CodeGuidelines.Tests;
 
 public class GitHubDocumentationServiceTests
 {
-    // Note: These are integration tests that require network access and may fail if the repository is private
-    // To run these tests, ensure the repository is public or set a valid GitHub token in the configuration
+    // Note: These are integration tests that require network access
+    // To run these tests, ensure you have network connectivity and are mindful of GitHub API rate limits
 
-    [Fact(Skip = "Integration test - requires network access and public repository")]
+    [Fact]
     public async Task GitHubDocumentationService_CanFetchFromPublicRepo()
     {
         // Arrange
@@ -41,7 +41,7 @@ public class GitHubDocumentationServiceTests
         Assert.NotEmpty(docs);
     }
 
-    [Fact(Skip = "Integration test - requires network access and public repository")]
+    [Fact]
     public async Task GitHubDocumentationService_CanFilterByCategory()
     {
         // Arrange
@@ -75,7 +75,7 @@ public class GitHubDocumentationServiceTests
         Assert.All(styleGuideDocs, doc => Assert.Equal(DocumentationCategory.StyleGuides, doc.Category));
     }
 
-    [Fact(Skip = "Integration test - requires network access and public repository")]
+    [Fact]
     public async Task GitHubDocumentationService_CanFetchContent()
     {
         // Arrange

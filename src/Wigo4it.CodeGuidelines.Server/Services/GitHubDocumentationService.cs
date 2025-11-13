@@ -37,11 +37,6 @@ public sealed class GitHubDocumentationService : IDocumentationService
         _httpClient.BaseAddress = new Uri("https://api.github.com");
         _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
         _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Wigo4it-CodeGuidelines-MCP", "1.0"));
-        
-        if (!string.IsNullOrWhiteSpace(_options.GitHubToken))
-        {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _options.GitHubToken);
-        }
     }
 
     public async Task<IReadOnlyList<DocumentationMetadata>> GetAllDocumentationAsync()
@@ -236,10 +231,6 @@ public sealed class GitHubDocumentationService : IDocumentationService
         var rawUrl = $"https://raw.githubusercontent.com/{_options.GitHubOwner}/{_options.GitHubRepository}/{_options.GitHubBranch}/{path}";
         
         var request = new HttpRequestMessage(HttpMethod.Get, rawUrl);
-        if (!string.IsNullOrWhiteSpace(_options.GitHubToken))
-        {
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _options.GitHubToken);
-        }
         
         var response = await _httpClient.SendAsync(request);
         response.EnsureSuccessStatusCode();

@@ -41,12 +41,6 @@ public sealed class DocumentationOptions
     public string GitHubBranch { get; set; } = "main";
 
     /// <summary>
-    /// Gets or sets the GitHub Personal Access Token for private repositories.
-    /// Optional - only required for private repositories.
-    /// </summary>
-    public string? GitHubToken { get; set; }
-
-    /// <summary>
     /// Gets or sets the documentation folder path within the repository.
     /// Default is "docs".
     /// </summary>
