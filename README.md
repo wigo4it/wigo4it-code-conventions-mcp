@@ -2,7 +2,97 @@
 
 An [MCP (Model Context Protocol)](https://modelcontextprotocol.io) server that provides access to Wigo4it's code guidelines, Architecture Decision Records (ADRs), recommendations, style guides, and project structures to AI assistants like GitHub Copilot.
 
-## 📋 Overview
+## � Quick Start - Production Installation
+
+### Prerequisites
+
+- .NET 10.0 SDK or later
+- An MCP-compatible client (VS Code with GitHub Copilot, Visual Studio, Claude Desktop, Cursor, etc.)
+
+### Step 1: Install the Tool
+
+Install the MCP server as a .NET global tool:
+
+```bash
+dotnet tool install --global Wigo4it.CodeGuidelines.McpServer
+```
+
+To update to the latest version:
+
+```bash
+dotnet tool update --global Wigo4it.CodeGuidelines.McpServer
+```
+
+### Step 2: Configure Your IDE
+
+#### Visual Studio Code (with GitHub Copilot)
+
+1. **Create or edit `.vscode/mcp.json`** in your workspace root:
+
+   ```json
+   {
+     "servers": {
+       "wigo4it-code-guidelines": {
+         "command": "wigo4it-code-guidelines"
+       }
+     }
+   }
+   ```
+
+2. **Reload VS Code** or restart the GitHub Copilot extension
+
+3. **Verify the connection**:
+   - Open GitHub Copilot Chat
+   - The MCP tools should be available automatically
+   - Try asking: `What ADRs are available?`
+
+#### Visual Studio 2022 (with GitHub Copilot)
+
+1. **Open Visual Studio settings**: Tools → Options → GitHub Copilot → MCP Servers
+
+2. **Add the MCP server**:
+   - **Name**: `wigo4it-code-guidelines`
+   - **Command**: `wigo4it-code-guidelines`
+
+3. **Restart Visual Studio** to activate the MCP server
+
+4. **Verify the connection**:
+   - Open GitHub Copilot Chat
+   - Ask: `What documentation is available from Wigo4it?`
+
+#### Claude Desktop
+
+Add to your Claude Desktop configuration file:
+
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`  
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`  
+**Linux**: `~/.config/Claude/claude_desktop_config.json`
+
+```json
+{
+  "servers": {
+    "wigo4it-code-guidelines": {
+      "command": "wigo4it-code-guidelines"
+    }
+  }
+}
+```
+
+**Restart Claude Desktop** after saving the configuration.
+
+### Step 3: Start Using It!
+
+Once configured, you can ask your AI assistant questions like:
+- "What ADRs are available?"
+- "Show me the C# style guide"
+- "What are the recommendations about Aspire?"
+- "Display the .NET project structure guidelines"
+
+The AI will automatically use the MCP tools to fetch the latest documentation from the Wigo4it repository.
+
+---
+
+## �📋 Overview
 
 This MCP server makes Wigo4it's coding standards and documentation accessible to AI-powered development tools through the Model Context Protocol. It exposes three tools that allow AI assistants to query and retrieve documentation on-demand during development.
 
@@ -14,22 +104,11 @@ This MCP server makes Wigo4it's coding standards and documentation accessible to
 - 🔄 **Automatic Discovery** - Documents are discovered automatically from GitHub or local filesystem
 - 🚀 **Public Repository** - No authentication required, works out of the box
 
-## 🚀 Installation
+## �️ Development Installation
 
-### Prerequisites
+For developers who want to contribute or run from source:
 
-- .NET 10.0 SDK or later
-- An MCP-compatible client (VS Code with GitHub Copilot, Claude Desktop, Cursor, etc.)
-
-### Option 1: Install as a .NET Global Tool (Recommended)
-
-Coming soon! Once published to NuGet.org or GitHub Packages, you'll be able to install with:
-
-```bash
-dotnet tool install --global Wigo4it.CodeGuidelines.McpServer
-```
-
-### Option 2: Run from Source (Current Method)
+### Clone and Build
 
 1. **Clone the repository**:
    ```bash
@@ -42,55 +121,21 @@ dotnet tool install --global Wigo4it.CodeGuidelines.McpServer
    dotnet build src/wigo4it-code-conventions-mcp.sln
    ```
 
-3. **Verify it works**:
+3. **Run the server**:
    ```bash
    dotnet run --project src/Wigo4it.CodeGuidelines.McpServer
    ```
    The server will start and wait for stdio connections from an MCP client.
 
-## 🔧 Configuration
+### Configure for Development
 
-### Visual Studio Code
+#### Visual Studio Code (Development Mode)
 
-Configure the MCP server in VS Code for use with GitHub Copilot:
-
-1. **Create or edit `.vscode/mcp.json`** in your workspace:
-
-   ```json
-   {
-     "servers": {
-       "wigo4it-code-guidelines": {
-         "command": "dotnet",
-         "args": [
-           "run",
-           "--project",
-           "C:\\absolute\\path\\to\\wigo4it-code-conventions-mcp\\src\\Wigo4it.CodeGuidelines.McpServer"
-         ]
-       }
-     }
-   }
-   ```
-
-   **Important:** Replace the path with the absolute path to where you cloned the repository.
-
-2. **Reload VS Code** or restart the GitHub Copilot extension
-
-3. **Verify the connection**:
-   - Open GitHub Copilot Chat
-   - The MCP tools should be available automatically
-   - Try asking: `What ADRs are available?`
-
-### Claude Desktop
-
-Add to `claude_desktop_config.json`:
-
-**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`  
-**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`  
-**Linux**: `~/.config/Claude/claude_desktop_config.json`
+When developing, configure VS Code to run from source:
 
 ```json
 {
-  "mcpServers": {
+  "servers": {
     "wigo4it-code-guidelines": {
       "command": "dotnet",
       "args": [
@@ -104,6 +149,25 @@ Add to `claude_desktop_config.json`:
 ```
 
 **Important:** Replace the path with the absolute path to where you cloned the repository.
+
+### Running Tests
+
+Run the test suite to verify everything works:
+
+```bash
+# Run all tests
+dotnet test src/wigo4it-code-conventions-mcp.sln
+
+# Run tests with code coverage
+dotnet test src/wigo4it-code-conventions-mcp.sln /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
+
+# Run tests with coverage threshold (80% minimum)
+dotnet test src/wigo4it-code-conventions-mcp.sln /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Threshold=80 /p:ThresholdType=line
+```
+
+The project maintains 91%+ test coverage across 23 unit tests.
+
+---
 
 ## 📚 Available MCP Tools
 
@@ -260,33 +324,7 @@ Documents are discovered automatically:
 
 No manual index maintenance is required.
 
-## 🛠️ Development
-
-### Running from Source
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/wigo4it/wigo4it-code-conventions-mcp.git
-   cd wigo4it-code-conventions-mcp
-   ```
-
-2. **Run the MCP server**:
-   ```bash
-   dotnet run --project src/Wigo4it.CodeGuidelines.McpServer
-   ```
-
-3. **Run tests**:
-   ```bash
-   cd src
-   dotnet test
-   ```
-
-4. **Build the solution**:
-   ```bash
-   dotnet build src/wigo4it-code-conventions-mcp.sln
-   ```
-
-### Adding New Documents
+## � Adding New Documents
 
 1. **Create a markdown file** in the appropriate `docs/` subfolder:
    - `docs/ADRs/` - Architecture Decision Records
