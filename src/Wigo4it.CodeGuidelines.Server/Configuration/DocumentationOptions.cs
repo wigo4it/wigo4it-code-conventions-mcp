@@ -1,0 +1,56 @@
+namespace Wigo4it.CodeGuidelines.Server.Configuration;
+
+/// <summary>
+/// Configuration options for documentation sources.
+/// </summary>
+public sealed class DocumentationOptions
+{
+    /// <summary>
+    /// Configuration section name.
+    /// </summary>
+    public const string SectionName = "Documentation";
+
+    /// <summary>
+    /// Gets or sets the base path for documentation files.
+    /// If null or empty, defaults to the GitHub repository docs folder.
+    /// </summary>
+    public string? BasePath { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to use local file system for debugging.
+    /// Default is false (uses GitHub repository).
+    /// </summary>
+    public bool UseLocalFileSystem { get; set; }
+
+    /// <summary>
+    /// Gets the effective base path, accounting for defaults.
+    /// </summary>
+    public string GetEffectiveBasePath()
+    {
+        if (!string.IsNullOrWhiteSpace(BasePath))
+        {
+            return BasePath;
+        }
+
+        // Default to docs folder relative to the repository root
+        var repoRoot = FindRepositoryRoot();
+        return Path.Combine(repoRoot, "docs");
+    }
+
+    private static string FindRepositoryRoot()
+    {
+        var currentDir = Directory.GetCurrentDirectory();
+        while (currentDir != null)
+        {
+            if (Directory.Exists(Path.Combine(currentDir, ".git")) ||
+                Directory.Exists(Path.Combine(currentDir, "docs")))
+            {
+                return currentDir;
+            }
+            currentDir = Directory.GetParent(currentDir)?.FullName;
+        }
+
+        // Fallback to current directory
+        return Directory.GetCurrentDirectory();
+    }
+}
