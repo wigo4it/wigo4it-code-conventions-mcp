@@ -84,8 +84,6 @@ jobs:
             --configuration Release \
             --no-build \
             --output ./nupkg \
-            /p:PackAsTool=true \
-            /p:ToolCommandName=wigo4it-code-guidelines \
             /p:Version=${{ steps.gitversion.outputs.semVer }} \
             /p:PackageVersion=${{ steps.gitversion.outputs.semVer }} \
             /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} \
@@ -93,12 +91,7 @@ jobs:
             /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} \
             /p:RepositoryUrl=https://github.com/${{ github.repository }} \
             /p:RepositoryType=git \
-            /p:PackageProjectUrl=https://github.com/${{ github.repository }} \
-            /p:PackageLicenseExpression=MIT \
-            /p:Authors="Wigo4it" \
-            /p:Company="Wigo4it" \
-            /p:Product="Wigo4it Code Guidelines MCP Server" \
-            /p:Description="MCP server that provides access to Wigo4it code guidelines, ADRs, recommendations, and style guides"
+            /p:PackageProjectUrl=https://github.com/${{ github.repository }}
       
       - name: Publish to GitHub Packages
         run: |
