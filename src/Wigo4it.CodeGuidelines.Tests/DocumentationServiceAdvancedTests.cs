@@ -35,8 +35,8 @@ public class DocumentationServiceAdvancedTests
                 UseLocalFileSystem = true,
                 BasePath = tempDir
             });
-            var logger = Mock.Of<ILogger<DocumentationService>>();
-            var service = new DocumentationService(options, logger);
+            var logger = Mock.Of<ILogger<LocalFileSystemDocumentationService>>();
+            var service = new LocalFileSystemDocumentationService(options, logger);
 
             // Act
             var result = await service.GetAllDocumentationAsync();
@@ -73,8 +73,8 @@ public class DocumentationServiceAdvancedTests
                 UseLocalFileSystem = true,
                 BasePath = tempDir
             });
-            var logger = Mock.Of<ILogger<DocumentationService>>();
-            var service = new DocumentationService(options, logger);
+            var logger = Mock.Of<ILogger<LocalFileSystemDocumentationService>>();
+            var service = new LocalFileSystemDocumentationService(options, logger);
 
             // Act
             var result = await service.GetDocumentationByCategoryAsync(DocumentationCategory.Structures);
@@ -109,8 +109,8 @@ public class DocumentationServiceAdvancedTests
                 UseLocalFileSystem = true,
                 BasePath = tempDir
             });
-            var logger = Mock.Of<ILogger<DocumentationService>>();
-            var service = new DocumentationService(options, logger);
+            var logger = Mock.Of<ILogger<LocalFileSystemDocumentationService>>();
+            var service = new LocalFileSystemDocumentationService(options, logger);
 
             // Act
             var result = await service.GetDocumentationByCategoryAsync(DocumentationCategory.ADRs);
@@ -146,8 +146,8 @@ public class DocumentationServiceAdvancedTests
                 UseLocalFileSystem = true,
                 BasePath = tempDir
             });
-            var logger = Mock.Of<ILogger<DocumentationService>>();
-            var service = new DocumentationService(options, logger);
+            var logger = Mock.Of<ILogger<LocalFileSystemDocumentationService>>();
+            var service = new LocalFileSystemDocumentationService(options, logger);
 
             // Act
             var result = await service.GetDocumentationByCategoryAsync(DocumentationCategory.Recommendations);
@@ -183,8 +183,8 @@ public class DocumentationServiceAdvancedTests
                 UseLocalFileSystem = true,
                 BasePath = tempDir
             });
-            var logger = Mock.Of<ILogger<DocumentationService>>();
-            var service = new DocumentationService(options, logger);
+            var logger = Mock.Of<ILogger<LocalFileSystemDocumentationService>>();
+            var service = new LocalFileSystemDocumentationService(options, logger);
 
             // Act - Call twice
             var result1 = await service.GetAllDocumentationAsync();

@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Wigo4it.CodeGuidelines.Server.Configuration;
@@ -18,8 +18,8 @@ public class DocumentationServiceTests
             UseLocalFileSystem = true,
             BasePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString())
         });
-        var logger = Mock.Of<ILogger<DocumentationService>>();
-        var service = new DocumentationService(options, logger);
+        var logger = Mock.Of<ILogger<LocalFileSystemDocumentationService>>();
+        var service = new LocalFileSystemDocumentationService(options, logger);
 
         // Act
         var result = await service.GetAllDocumentationAsync();
@@ -47,8 +47,8 @@ public class DocumentationServiceTests
                 UseLocalFileSystem = true,
                 BasePath = tempDir
             });
-            var logger = Mock.Of<ILogger<DocumentationService>>();
-            var service = new DocumentationService(options, logger);
+            var logger = Mock.Of<ILogger<LocalFileSystemDocumentationService>>();
+            var service = new LocalFileSystemDocumentationService(options, logger);
 
             // Act
             var result = await service.GetDocumentationByCategoryAsync(DocumentationCategory.ADRs);
@@ -88,8 +88,8 @@ public class DocumentationServiceTests
                 UseLocalFileSystem = true,
                 BasePath = tempDir
             });
-            var logger = Mock.Of<ILogger<DocumentationService>>();
-            var service = new DocumentationService(options, logger);
+            var logger = Mock.Of<ILogger<LocalFileSystemDocumentationService>>();
+            var service = new LocalFileSystemDocumentationService(options, logger);
 
             // Force initialization
             await service.GetAllDocumentationAsync();
@@ -121,8 +121,8 @@ public class DocumentationServiceTests
             UseLocalFileSystem = true,
             BasePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString())
         });
-        var logger = Mock.Of<ILogger<DocumentationService>>();
-        var service = new DocumentationService(options, logger);
+        var logger = Mock.Of<ILogger<LocalFileSystemDocumentationService>>();
+        var service = new LocalFileSystemDocumentationService(options, logger);
 
         // Act
         var result = await service.GetDocumentationContentAsync("nonexistent/doc");

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol.Server;
@@ -17,8 +18,22 @@ builder.Logging.AddConsole(consoleLogOptions =>
 builder.Services.Configure<DocumentationOptions>(
     builder.Configuration.GetSection(DocumentationOptions.SectionName));
 
-// Register services
-builder.Services.AddSingleton<IDocumentationService, DocumentationService>();
+// Register HttpClient for GitHub API
+builder.Services.AddHttpClient("GitHub");
+
+// Register appropriate documentation service based on configuration
+var useLocalFileSystem = builder.Configuration
+    .GetSection(DocumentationOptions.SectionName)
+    .GetValue<bool>(nameof(DocumentationOptions.UseLocalFileSystem));
+
+if (useLocalFileSystem)
+{
+    builder.Services.AddSingleton<IDocumentationService, LocalFileSystemDocumentationService>();
+}
+else
+{
+    builder.Services.AddSingleton<IDocumentationService, GitHubDocumentationService>();
+}
 
 // Configure MCP server
 builder.Services

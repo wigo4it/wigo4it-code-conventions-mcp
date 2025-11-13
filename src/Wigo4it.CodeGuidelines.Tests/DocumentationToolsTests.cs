@@ -24,8 +24,8 @@ public class DocumentationToolsTests
             UseLocalFileSystem = true,
             BasePath = tempDir
         });
-        var logger = Mock.Of<ILogger<DocumentationService>>();
-        return new DocumentationService(options, logger);
+        var logger = Mock.Of<ILogger<LocalFileSystemDocumentationService>>();
+        return new LocalFileSystemDocumentationService(options, logger);
     }
 
     [Fact]

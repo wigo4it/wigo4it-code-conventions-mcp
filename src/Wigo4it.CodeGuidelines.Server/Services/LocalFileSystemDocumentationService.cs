@@ -7,19 +7,19 @@ using Wigo4it.CodeGuidelines.Server.Models;
 namespace Wigo4it.CodeGuidelines.Server.Services;
 
 /// <summary>
-/// Default implementation of the documentation service.
+/// Local file system implementation of the documentation service.
 /// </summary>
-public sealed class DocumentationService : IDocumentationService
+public sealed class LocalFileSystemDocumentationService : IDocumentationService
 {
     private readonly DocumentationOptions _options;
-    private readonly ILogger<DocumentationService> _logger;
+    private readonly ILogger<LocalFileSystemDocumentationService> _logger;
     private readonly ConcurrentDictionary<string, DocumentationMetadata> _cache = new();
     private bool _isInitialized;
     private readonly SemaphoreSlim _initLock = new(1, 1);
 
-    public DocumentationService(
+    public LocalFileSystemDocumentationService(
         IOptions<DocumentationOptions> options,
-        ILogger<DocumentationService> logger)
+        ILogger<LocalFileSystemDocumentationService> logger)
     {
         _options = options.Value;
         _logger = logger;
