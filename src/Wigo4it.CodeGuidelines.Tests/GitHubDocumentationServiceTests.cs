@@ -13,7 +13,7 @@ public class GitHubDocumentationServiceTests
     // Note: These are integration tests that require network access
     // To run these tests, ensure you have network connectivity and are mindful of GitHub API rate limits
 
-    [Fact]
+    [Fact(Skip = "Integration test requiring network access")]
     public async Task GitHubDocumentationService_CanFetchFromPublicRepo()
     {
         // Arrange
@@ -41,7 +41,7 @@ public class GitHubDocumentationServiceTests
         Assert.NotEmpty(docs);
     }
 
-    [Fact]
+    [Fact(Skip = "Integration test requiring network access")]
     public async Task GitHubDocumentationService_CanFilterByCategory()
     {
         // Arrange
@@ -75,7 +75,7 @@ public class GitHubDocumentationServiceTests
         Assert.All(styleGuideDocs, doc => Assert.Equal(DocumentationCategory.StyleGuides, doc.Category));
     }
 
-    [Fact]
+    [Fact(Skip = "Integration test requiring network access")]
     public async Task GitHubDocumentationService_CanFetchContent()
     {
         // Arrange
