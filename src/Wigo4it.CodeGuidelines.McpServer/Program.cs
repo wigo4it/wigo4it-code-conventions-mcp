@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using ModelContextProtocol.Server;
 using Wigo4it.CodeGuidelines.Server.Configuration;
 using Wigo4it.CodeGuidelines.Server.Services;
+using Wigo4it.CodeGuidelines.Server.Tools;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -35,10 +36,10 @@ else
     builder.Services.AddSingleton<IDocumentationService, GitHubDocumentationService>();
 }
 
-// Configure MCP server
+// Configure MCP server - explicitly specify the assembly containing the tools
 builder.Services
     .AddMcpServer()
     .WithStdioServerTransport()
-    .WithToolsFromAssembly();
+    .WithToolsFromAssembly(typeof(DocumentationTools).Assembly);
 
 await builder.Build().RunAsync();
