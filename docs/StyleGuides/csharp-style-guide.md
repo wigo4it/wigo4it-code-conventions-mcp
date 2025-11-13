@@ -4,6 +4,7 @@ category: StyleGuide
 language: CSharp
 status: Active
 last-updated: 2025-11-13
+tags: [csharp, style-guide, coding-conventions, code-quality]
 reference: https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions
 ---
 

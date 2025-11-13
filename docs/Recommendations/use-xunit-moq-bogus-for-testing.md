@@ -4,6 +4,7 @@ category: Recommendations
 status: Active
 last-updated: 2025-11-13
 applicability: All test projects
+tags: [testing, xunit, moq, bogus, unit-testing, mocking]
 related:
   - StyleGuides/csharp-style-guide.md
   - ADR-006-adoption-of-cqrs-pattern.md

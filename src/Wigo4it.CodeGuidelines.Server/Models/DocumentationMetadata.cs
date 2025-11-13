@@ -29,4 +29,9 @@ public sealed class DocumentationMetadata
     /// Gets or sets an optional description of the documentation.
     /// </summary>
     public string? Description { get; init; }
+
+    /// <summary>
+    /// Gets or sets the tags associated with the documentation.
+    /// </summary>
+    public List<string> Tags { get; init; } = [];
 }

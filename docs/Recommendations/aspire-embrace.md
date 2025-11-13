@@ -4,6 +4,7 @@ category: Recommendations
 status: Active
 last-updated: 2025-11-13
 applicability: Projects using .NET Aspire
+tags: [aspire, orchestration, client-libraries, distributed-applications]
 related:
   - ADR-002-adoption-of-aspire-for-distributed-applications.md
   - Structures/dotnet-project-structure.md

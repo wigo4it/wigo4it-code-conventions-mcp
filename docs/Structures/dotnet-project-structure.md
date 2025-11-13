@@ -4,6 +4,7 @@ category: Structures
 status: Active
 last-updated: 2025-11-13
 applicability: .NET 10 / C# 14
+tags: [dotnet, project-structure, organization, aspire, modular-monolith]
 ---
 
 # .NET Project Structure

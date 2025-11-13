@@ -97,10 +97,13 @@ The AI will automatically use the MCP tools to fetch the latest documentation fr
 This MCP server makes Wigo4it's coding standards and documentation accessible to AI-powered development tools through the Model Context Protocol. It exposes three tools that allow AI assistants to query and retrieve documentation on-demand during development.
 
 **Key Features:**
-- 🔍 **3 MCP Tools** for querying guidelines, ADRs, recommendations, style guides, and structures
+- 🔍 **6 MCP Tools** for querying, searching, and discovering guidelines
 - 📂 **Dual Source Support** - Load from local filesystem (development) or GitHub (production)
 - 🤖 **AI-Ready** - Seamless integration with GitHub Copilot, Claude, and other MCP clients
 - 🏷️ **Category-Based Organization** - ADRs, Recommendations, StyleGuides, Structures
+- 🔍 **Full-Text Search** - Search across all documentation with relevance scoring
+- 🔗 **Related Documents** - Discover related documentation based on content similarity
+- 🏷️ **Tag Filtering** - Filter documents by tags across categories
 - 🔄 **Automatic Discovery** - Documents are discovered automatically from GitHub or local filesystem
 - 🚀 **Public Repository** - No authentication required, works out of the box
 
@@ -171,13 +174,23 @@ The project maintains 91%+ test coverage across 23 unit tests.
 
 ## 📚 Available MCP Tools
 
-The server exposes 3 tools for querying documentation:
+The server exposes 6 tools for querying and discovering documentation:
+
+### Basic Query Tools
 
 | Tool | Description | Parameters |
 |------|-------------|------------|
-| `GetAllDocumentation` | List all available documents with metadata (title, category, description) | None |
+| `GetAllDocumentation` | List all available documents with metadata (title, category, description, tags) | None |
 | `GetDocumentationByCategory` | Filter documents by category | `category` (ADRs, Recommendations, StyleGuides, Structures) |
 | `GetDocumentationContent` | Retrieve full markdown content of a specific document | `id` (format: "category/filename") |
+
+### Discovery & Search Tools
+
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `SearchDocumentation` | Search all documentation with relevance scoring | `searchTerm` (text to search for) |
+| `GetRelatedDocumentation` | Find documents related to a specific document | `documentId`, `maxResults` (default: 5) |
+| `GetDocumentationByTag` | Filter documents by one or more tags | `tags` (comma-separated list) |
 
 ### Categories
 
@@ -207,6 +220,13 @@ When configured with GitHub Copilot, Claude, or other MCP clients, you can ask:
 - "Get the ADR about modular monoliths"
 - "Display the .NET project structure"
 - "Show the recommendation about Aspire"
+
+**Search & Discovery:**
+- "Search for documents about Aspire"
+- "Find documentation related to ADR-002"
+- "Show me all documents tagged with 'architecture'"
+- "What documents discuss microservices?"
+- "Find guidelines about testing"
 
 ### Tool Usage Examples
 
@@ -242,6 +262,43 @@ Retrieve the full content of a document:
   }
 }
 ```
+
+#### SearchDocumentation
+Search across all documentation with relevance scoring:
+```json
+{
+  "tool": "SearchDocumentation",
+  "parameters": {
+    "searchTerm": "aspire"
+  }
+}
+```
+Returns ranked results with relevance scores (0-100), match counts, and matching text excerpts.
+
+#### GetRelatedDocumentation
+Find documents related to a specific document:
+```json
+{
+  "tool": "GetRelatedDocumentation",
+  "parameters": {
+    "documentId": "adrs/adr-002-adoption-of-aspire-for-distributed-applications",
+    "maxResults": 5
+  }
+}
+```
+Uses content similarity, shared tags, and category matching to identify related documents.
+
+#### GetDocumentationByTag
+Filter documents by tags:
+```json
+{
+  "tool": "GetDocumentationByTag",
+  "parameters": {
+    "tags": "architecture,aspire"
+  }
+}
+```
+Returns all documents that have at least one of the specified tags.
 
 ## 📖 Document Structure
 
