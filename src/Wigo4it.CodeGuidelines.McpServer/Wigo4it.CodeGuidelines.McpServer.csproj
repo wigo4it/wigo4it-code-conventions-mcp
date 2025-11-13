@@ -13,6 +13,32 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    
+    <!-- Package Metadata -->
+    <PackageId>Wigo4it.CodeGuidelines.McpServer</PackageId>
+    <Title>Wigo4it Code Guidelines MCP Server</Title>
+    <Authors>Wigo4it</Authors>
+    <Company>Wigo4it</Company>
+    <Product>Wigo4it Code Guidelines MCP Server</Product>
+    <Description>MCP (Model Context Protocol) server that provides access to Wigo4it code guidelines, Architecture Decision Records (ADRs), recommendations, style guides, and project structures. Enables AI assistants like GitHub Copilot to query and retrieve documentation.</Description>
+    <PackageTags>mcp;model-context-protocol;code-guidelines;adr;documentation;aspire;dotnet;copilot</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/wigo4it/wigo4it-code-conventions-mcp</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/wigo4it/wigo4it-code-conventions-mcp</PackageProjectUrl>
+    
+    <!-- Tool Configuration -->
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>wigo4it-code-guidelines</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+    
+    <!-- Versioning (set by CI/CD) -->
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>

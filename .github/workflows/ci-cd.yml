@@ -1,0 +1,153 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - '.github/**'
+      - 'GitVersion.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
+  actions: read
+
+jobs:
+  build-and-publish:
+    name: Build, Version, and Publish
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v1.1.1
+        with:
+          versionSpec: '6.x'
+      
+      - name: Determine Version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v1.1.1
+        with:
+          useConfigFile: true
+          configFilePath: GitVersion.yml
+      
+      - name: Display GitVersion outputs
+        run: |
+          echo "Major: ${{ steps.gitversion.outputs.major }}"
+          echo "Minor: ${{ steps.gitversion.outputs.minor }}"
+          echo "Patch: ${{ steps.gitversion.outputs.patch }}"
+          echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
+          echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
+          echo "InformationalVersion: ${{ steps.gitversion.outputs.informationalVersion }}"
+      
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+          source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Restore dependencies
+        run: dotnet restore src/wigo4it-code-conventions-mcp.sln
+      
+      - name: Build solution
+        run: |
+          dotnet build src/wigo4it-code-conventions-mcp.sln \
+            --configuration Release \
+            --no-restore \
+            /p:Version=${{ steps.gitversion.outputs.semVer }} \
+            /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} \
+            /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} \
+            /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
+      
+      - name: Run tests
+        run: |
+          dotnet test src/Wigo4it.CodeGuidelines.Tests/Wigo4it.CodeGuidelines.Tests.csproj \
+            --configuration Release \
+            --no-build \
+            --verbosity normal \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=cobertura \
+            /p:Threshold=80 \
+            /p:ThresholdType=line
+      
+      - name: Pack as .NET tool
+        run: |
+          dotnet pack src/Wigo4it.CodeGuidelines.McpServer/Wigo4it.CodeGuidelines.McpServer.csproj \
+            --configuration Release \
+            --no-build \
+            --output ./nupkg \
+            /p:PackAsTool=true \
+            /p:ToolCommandName=wigo4it-code-guidelines \
+            /p:Version=${{ steps.gitversion.outputs.semVer }} \
+            /p:PackageVersion=${{ steps.gitversion.outputs.semVer }} \
+            /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} \
+            /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} \
+            /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} \
+            /p:RepositoryUrl=https://github.com/${{ github.repository }} \
+            /p:RepositoryType=git \
+            /p:PackageProjectUrl=https://github.com/${{ github.repository }} \
+            /p:PackageLicenseExpression=MIT \
+            /p:Authors="Wigo4it" \
+            /p:Company="Wigo4it" \
+            /p:Product="Wigo4it Code Guidelines MCP Server" \
+            /p:Description="MCP server that provides access to Wigo4it code guidelines, ADRs, recommendations, and style guides"
+      
+      - name: Publish to GitHub Packages
+        run: |
+          dotnet nuget push ./nupkg/*.nupkg \
+            --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json \
+            --api-key ${{ secrets.GITHUB_TOKEN }} \
+            --skip-duplicate
+      
+      - name: Create Git Tag
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@github.com"
+          git tag -a "v${{ steps.gitversion.outputs.semVer }}" -m "Release version ${{ steps.gitversion.outputs.semVer }}"
+          git push origin "v${{ steps.gitversion.outputs.semVer }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Create GitHub Release
+        if: github.ref == 'refs/heads/main'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.gitversion.outputs.semVer }}
+          release_name: Release v${{ steps.gitversion.outputs.semVer }}
+          body: |
+            ## Release v${{ steps.gitversion.outputs.semVer }}
+            
+            ### Installation
+            
+            Install as a .NET global tool:
+            ```bash
+            dotnet tool install --global Wigo4it.CodeGuidelines.McpServer --version ${{ steps.gitversion.outputs.semVer }}
+            ```
+            
+            ### What's Changed
+            
+            See the commit history for details.
+            
+            ### Full Changelog
+            https://github.com/${{ github.repository }}/commits/v${{ steps.gitversion.outputs.semVer }}
+          draft: false
+          prerelease: false
+      
+      - name: Upload NuGet package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-package-v${{ steps.gitversion.outputs.semVer }}
+          path: ./nupkg/*.nupkg
+          retention-days: 90

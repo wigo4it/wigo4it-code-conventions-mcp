@@ -1,0 +1,78 @@
+name: Pull Request Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  build-and-test:
+    name: Build and Test MCP Server
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      
+      - name: Restore dependencies
+        run: dotnet restore src/wigo4it-code-conventions-mcp.sln
+      
+      - name: Build solution
+        run: dotnet build src/wigo4it-code-conventions-mcp.sln --configuration Release --no-restore
+      
+      - name: Run tests with code coverage
+        run: |
+          dotnet test src/Wigo4it.CodeGuidelines.Tests/Wigo4it.CodeGuidelines.Tests.csproj \
+            --configuration Release \
+            --no-build \
+            --verbosity normal \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=cobertura \
+            /p:CoverletOutput=./TestResults/coverage.cobertura.xml \
+            /p:Threshold=80 \
+            /p:ThresholdType=line \
+            /p:Exclude="[xunit.*]*"
+      
+      - name: Generate coverage report
+        if: always()
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.3.11
+        with:
+          reports: 'src/Wigo4it.CodeGuidelines.Tests/TestResults/coverage.cobertura.xml'
+          targetdir: 'coverage-report'
+          reporttypes: 'HtmlInline;MarkdownSummaryGithub'
+      
+      - name: Add coverage comment to PR
+        if: always() && github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: coverage
+          path: coverage-report/SummaryGithub.md
+      
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage-report/
+          retention-days: 30
+      
+      - name: Check coverage threshold
+        if: always()
+        run: |
+          echo "Code coverage check completed. Minimum threshold: 80%"
+          if [ $? -ne 0 ]; then
+            echo "::error::Code coverage is below 80% threshold"
+            exit 1
+          fi
